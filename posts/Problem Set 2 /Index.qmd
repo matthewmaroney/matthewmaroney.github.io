@@ -1,0 +1,282 @@
+---
+title: "Problem Set 2"
+format: html
+editor: visual
+---
+
+Before getting started, we'll need to make sure the necessary packages installed and libraries loaded. Look at the list below and install if necessary before loading them.
+
+```{r}
+#| message: false
+#| warning: false
+# Clear everything
+rm(list = ls())
+# Load libraries
+library(tidyverse)
+library(ggthemes)
+library(GGally)
+library(dummy)
+library(corrplot)
+library(gamlr)
+```
+
+## Step 1
+
+In this step we are seeking some understanding of the data we have obtained. Remember this is different from understanding the data we **NEED** to obtain to best answer a business question. We need to understand both and the differences between the two. But, because we have this `bikes_ps.csv` data set, we will take a dive into that. We first just get an idea for the dimensions and contents.
+
+```{r}
+#| message: false
+#| warning: false
+# Read in the data set and use glimpse to get an idea.
+bikes = read_csv("bikes_ps.csv")
+glimpse(bikes)
+```
+
+My analysis: For this data set, there are 731 observations, or rows, each corresponding to a given date in 2011 or 2012. There are 10 columns, or variables, each a different feature about the given day (season, day of the week, temperature, windspeed, etc). Season, Holiday, Weekday, Weather, and Rentals are all numeric variables expressed as integers. Temperature, Realfeel, Humidity, and Windspeed are all numeric variables containing decimals. Date is expressed as a date.
+
+Now these are the default choices made by the structure of the data set along with the processing intelligence of the `read_csv()` import function. But our human understanding of the data and its use in solving a business problem are crucial to understanding what the datatype should be and whether changes will need to be made.
+
+## Step 2
+
+Looking at the data we see that the numeric data types are not truly appropriate for some of the variables. Lets start with some obvious ones like `season` and `holiday`. First we need to remember that all variables/features are encoded information. And we need to discern what the original information to be encoded was and how the encoding scheme we see relates to it. For `season` we can be confident it was meant to indicate the general season in which a rental took place, such as winter, spring, summer, and fall. Instead of using text, these seasons were encoded, or represented by, a number. Now any numbers could be chosen, but typically the numbers might start at the beginning of a year and progress from there, in other words *maybe* `winter = 1`, `spring = 2`, etc. However, we cannot be truly certain without checking. First the best idea is to look at a codebook if one is provided. A codebook is a description of encoding schemes given by the person or persons who actually did the encoding. An alternative method in this case would be to look at the data column along with the season to see whether 1 corresponds to winter months etc. For brevity, we won't do this for all features, but we'll take a look at what it means to sleuth out these problems.
+
+```{r}
+# Create a new feature representing the month of year
+# i.e., jan = 1, feb = 2, ..., dec = 12.
+# Then we'll create a table showing season by month
+bikes %>%
+  mutate(month = month(date)) %>%
+  group_by(month) %>%
+  select(season, month) %>%
+  table()
+```
+
+From the above table it becomes clear that the season variable not easily dividable into months. For example season 1 does correspond to wintery months such as December, January, Februrary, and March. But March also has some season 2. Similarly, December has a lot more observations in season 4 (maybe Fall?) than season 1 - Winter. This may suggest that the variable indicates the first official day of winter on December 21 and the first official day of spring on March 21, etc.
+
+However it is encoded, the `season` feature is not truly numeric. Instead a number on a football jersey, the value is nominal and meant to be an identifier - identifying to which season a day belongs. This is called nominal or categorical data. In R, this is most commonly coded as the `factor` datatype.
+
+Other features also use numbers this way and should be represented as factors instead: `holiday`, `weekday`, and `weather`. We can now convert these to factors, and even specify new labels if we'd like.
+
+```{r}
+bikes = bikes %>%
+  mutate_at(vars(season, holiday, weekday, weather), factor) %>%
+  mutate(season = fct_recode(season, "Winter"="1", 
+                                     "Spring"="2",
+                                     "Summer"="3",
+                                     "Fall"="4"))
+```
+
+My analysis: Many of the variables measured in this data set, such as season, holiday, weekday, and weather, are integer (still numeric) values in the data, i.e. whole, non-decimal numbers. However, they don't truly represent numbers - the numbers are assigned to a certain condition within the variable, such as the day of the week or season (e.g. Monday=1, Tuesday=2... or Winter=1, Spring=2...). This makes them prime candidates for transformation into factor variables so that they are easier to work with.
+
+#### Other Factor Feature Explanations
+
+-   **holiday**: This is a binary indicator. A "1" indicates the data is considered a holiday and a 0 that it isn't. This is categorical and so it needed to be converted to two groups.
+
+-   **weekday**: Here each number represents a day of the week like Sunday, Monday, etc. This means the numbers don't act as numbers - but instead indicate the day of the week a rental occurs. So we convert it to the categorical `factor` data type. We could easily change the labels to reflect the day of the week.
+
+-   **weather**: This appears to take on values 1, 2, and 3. But what does it mean? Without a codebook this one is a problem. We cannot be sure whether this is in fact categorical or numerical, and we wouldn't know that the categories are. Likely, it refers to weather severity or precipitation. For example, perhaps 1 is clear skies no precipitation, 2 is cloudy/rainy, and 3 is stormy. But we would need to reach out to the data creator to be sure.
+
+## Step 3
+
+Now that we've got everything properly recognized as numeric or factor, we can use `summary()` to look at some basic statistics and also scout out missing values. Do make things easier to read, we'll divide summaries by numeric and factor data types.
+
+```{r}
+bikes %>%
+  select(-date) %>%
+  keep(is.numeric) %>%
+  summary()
+```
+
+```{r}
+bikes %>%
+  select(-date) %>%
+  keep(is.factor) %>%
+  summary()
+```
+
+We see that we have no missing values for factor variables, and are only missing values for the `realfeel` variable in the set of numeric variables. We are missing 27 values. We could throw these out, but one problem with that is what if they are not missing by random? In other words, what if there are certain days, say when rentals are really high or low that causes this number not to be recorded? Also, although 27 observations are missing `realfeel`, they are not missing other values. By discarding them, we also throw out all the other information those observations contain. An alternative is to *impute* the missing values. This means we fill in numbers in the blank spots. But what numbers? We're essentially making up data by trying to guess what was supposed to be recorded there. If we're going to do this, we should first try to do no harm. Essentially, we should hope that the statistical properties of the data are not altered or biased by our choice of value. There are number of ways to do this, but for this assignment you're asked to do the median value imputation. For illustration purposes I'm going to create a copy to compare (you don't need to do this).
+
+```{r}
+bikes = bikes %>%
+  mutate(realfeel_orig = realfeel)
+```
+
+Now, lets impute the missing values and compare.
+
+```{r}
+bikes = bikes %>%
+  mutate(realfeel = ifelse(is.na(realfeel),
+                           median(realfeel, na.rm = TRUE),
+                           realfeel))
+```
+
+The above code uses `ifelse` logic to replace values. It asks a question (checks a condition) and then does different actions based on the answer.
+
+Is realfeel missing? (`is.na(realfeel)`):
+
+-   YES (TRUE): replace with `median(reelfeel, na.rm = TRUE)`.
+
+-   NO (FALSE): replace with `realfeel` (which leaves it unchanged, since we're just replacing it with itself).
+
+Now we can compare the resulting distributions.
+
+```{r}
+bikes %>%
+  select(realfeel, realfeel_orig) %>%
+  summary()
+```
+
+Looking at the above distributions, we see that `realfeel` doesn't have any missing values and is the same median and basically the same mean. Extreme points are not changed, although the 1st and 3rd quartiles changed a smidgen.
+
+```{r}
+# Remove the copy of original realfeel
+bikes = bikes %>% select(-realfeel_orig)
+```
+
+Step 4
+
+Now we need to gain some understanding of what we're trying to predict, `rentals`. This involves understanding what the variable is and its distribution. Rentals appears to encode the total numbers of bike rentals that occurred on a given date. This is count data. We can use both descriptive statistics as well as a histogram to get a picture. Additionally, we can look at a picture of rentals over time to see if there is some trending.
+
+```{r}
+bikes %>% select(rentals) %>% summary()
+```
+
+The lowest recorded number is 22 rentals, and the max a whopping 8,714 rentals! Across the data the mean is roughly 4500 rentals and the median is only a little higher suggesting that there shouldn't be an extreme skew and it's fairly symmetric.
+
+```{r}
+#| message: false
+bikes %>%
+  ggplot(aes(x=rentals)) + 
+  geom_histogram(aes(y=after_stat(density)),
+                 fill = "aquamarine",
+                 color = "aquamarine3",
+                 alpha = 0.7) +
+  geom_density(color = "black") +
+  labs(title = "Distribution of Daily Bike Rentals",
+       x = "Rentals (count)") +
+  theme_clean()
+```
+
+Fortunately, we don't seem to have a huge number of outliers and the distribution is not highly skewed. This means that we might not need to make a log-transformation of this feature to make it more normal. However, one thing to note is that it is a tri-model looking distribution. There are peaks in the data which suggest that there might be three different over-lapping normal distributions. A low, middle, and high one.
+
+My analysis: The distribution of rentals is not skewed strongly to the left or right. Transformation of the data is thus not necessary. The data also has three humps, two smaller ones centered around \~2000 rentals and \~7300 rentals respectively, and the largest in the center of the data at \~4600 rentals. These are known as tri-modal distributions. This indicates a possibility that rental days could be sorted into low, middle, and high buckets, based on variables like time of week, temperature, and wind. There do not appear to be a substantial number of outliers.
+
+## Step 5
+
+Many of the supervised learning algorithms can be helped or hurt by the relationships between features that will be used as predictors. We need to understand the distributions of each variable, looking for skew, outliers, and any other weirdness. This could involve histograms or boxplots of the variables. We can use scatter plots to look at relationships between predictors. For easier comparison we can also use correlation matrices to show statistically linear relationships.
+
+```{r}
+#| message: false
+bikes %>%
+  keep(is.numeric) %>%
+  ggpairs()
+```
+
+First off we can see that `temperature` and `realfeel` have an almost perfectly linear relationship. The correlation is 0.96! This is a suspiciously strong relationship. In fact, this usually means that one variable is a function of the other. Indeed, `realfeel` is a relationship between temperature and humidity and wind that is mean to incorporate what temperature *it feels like to a human*. In such a case, we will want to leave out a variable. Either `realfeel` or the other features that go into it.
+
+My analysis: realfeel will be excluded. It is near perfectly correlated with temperature, since temperature is based on it. We could disregard temperature and the other variables here which contribute to how it really feels outside, i.e. humidity, windspeed, etc, or we could eliminate the use of realfeel. Eliminating the use of realfeel is useful because the other variables, like humidity and wind speed, tell us important things about the conditions for biking that realfeel doesn't. One day could be 65 degrees with no wind and no humidity, leading to a realfeel of 65, or it could be 80 degrees with such substantial wind that there is a wind chill of -15, leading to a realfeel of 65 degrees even with no humidity, and a much worse day for biking. Thus, it is better to eliminate realfeel than temperature and all the variables used in concert with it.
+
+The distribution plots do not look particularly alarming. And the scatterplots don't show any other overwhelmingly strong relationships. What we can see, is that there is a positive and nonlinear relationship between temperature and rentals. Warmer temps are associated with more rentals (not surprising). But eventually, warmer temperatures result in weather that is too hot for comfort - leading to decreased rentals.
+
+We can also check these correlations with `corrplot`.
+
+```{r}
+bikes %>%
+  keep(is.numeric) %>%
+  cor() %>%
+  corrplot()
+```
+
+Sometimes we need to convert features to achieve different objectives.
+
+1.  We might transform a feature to make it easier for our learning algorithm to use, or
+2.  we might transform a feature to put it on the same or similar scale with the the other features.
+
+We're going to Z-score normalize the `temperature` feature. Our reason is mostly arbitrary, but one benefit is that after the transformation the mean will be zero. Positive numbers will represent above average temperatures and negative below average ones.
+
+```{r}
+bikes = bikes %>%
+  mutate(temperature = (temperature - mean(temperature))/sd(temperature))
+
+bikes %>%
+  select(temperature) %>%
+  summary()
+```
+
+We can min-max normalize the wind variable. This will take all values of the feature and cram it into the interval $[0, 1]$. It essentially puts a feature into a percent range.
+
+```{r}
+bikes = bikes %>%
+  mutate(windspeed = (windspeed - min(windspeed))/(max(windspeed)-min(windspeed)))
+```
+
+A very important step, and a very common one required by many learning algorithms, is converting all categorical variables into dummy variables. This can be done many different ways in R. The `dummy` package does make it easier, however.
+
+```{r}
+# Convert every factor type feature into 
+# a collection dummy variables.
+bikes_dummies = dummy(bikes, int = TRUE)
+```
+
+Before running the `dummy()` function we had 10 variables in the dataset. The result of the function is a new dataset with only the dummy variables generated from the factor variables in `bikes`. At this point we can replace the factor variables with the dummy ones.
+
+```{r}
+bikes_num = bikes %>% keep(is.numeric)
+bikes = bind_cols(bikes_num, bikes_dummies)
+```
+
+## Step 6
+
+We're going to perform a penalized form of regression known as LASSO to find a decent predictive model. We'll need to do a few things first. We need to get rid variables we don't intend to have as predictors. The `date` and `realfeel` features will be removed.
+
+```{r}
+bikes = bikes %>%
+  select(-realfeel) %>%
+  mutate(temperature2 = temperature^2)
+```
+
+Normally, for a linear regression, you'd need to remove one dummy variable from a categorical variable. For example, season has 4 values (Winter, Spring, Fall, and Summer). We have dummy variable for each, but we need to omit one in order for it to work. But with LASSO, its okay and actually better to include them all and let the algorithm decide which to eliminate.
+
+```{r}
+# Separate predictors from target feature.
+rentals = bikes$rentals
+predictors = as.matrix(select(bikes, -rentals))
+predictors = predictors 
+  
+
+# estimate model
+cv.model = cv.gamlr(x=predictors, y=rentals)
+plot(cv.model)
+```
+
+```{r}
+betamin = coef(cv.model, select = "min")
+betamin
+```
+
+```{r}
+bikes = bikes %>%
+  mutate(pred = as.numeric(predict(cv.model, predictors)))
+```
+
+```{r}
+bikes %>%
+  ggplot(aes(x=rentals, y=pred)) +
+  geom_point()
+```
+
+Discussion
+
+Discuss whether you think the features you have in the data make sense for learning to predict daily bike rentals.
+
+The features in my data do make sense for predicting daily bike rentals. Many factors influence a person's decision to bike versus taking other forms of transportation like public transit or a car. These include the type of trip they are taking (business/commute / pleasure / errands / etc) and the weather and the various considerations there. Our data is spot on here. We have information on whether a given day is a holiday, the weather conditions like temperature, wind speed, and humidity, and the day of the week. Weather conditions are particularly useful as on days with heavy rain, snow, or excessive heat people are likely not to bike for exercise or pleasure. The same is true for days with excessive humidity or heavy winds. The data on day of the week is useful as some individuals may use our bike rental service to commute to work. More individuals are also likely to bike on the weekends for pleasure purposes, when they are off work. We can also use the weather and day of the week data in conjutnion to, for example, project how many rentals we may lose to commuters taking public transit on days with prohibitive weather. Holiday data is useful because some with short distances to travel to family or friends may use our bikes. It's more likely, though, that this would be useful to project falling rentals as people stay in for the Holidays or move long distances via plane or carpooling.
+
+Discuss what is means in this case to train or "fit" a model to the data you prepared.
+
+"Fitting" a model to the data in this case means finding the outputs for a set of inputs that minimize the sum of squared errors across the whole range of inputs. Error is the actual value minus our predicted value, and is squared so that if the error is negative it is still registered as error. In this case our inputs are the data regarding weather, day of week, humidity, whether it is a holiday, and our other variables. The algorithm learns what values for these variables lead to high levels of rentals and which lead to low levels of rentals. This allows it to create a model through which projected weather, humidity, wind speed, etc values can be input to generate a projected number of rentals as an output. The goal is to minimize the amount of error present, i.e. for the projections to be as close as possible to the observed values.
+
+Discuss which preparations you did were required to make the learning algorithm work, and which were not strictly required, but maybe are a good idea.
+
+Cleaning the data was an important step in making the learning algorithm. There was a substantial amount of missing data for the realfeel variable, and, even though it ended up being eliminated for multicollinearity reasons, it was good to feed the algorithm a clean data set. We also converted some variables, which were expressed numerically, to factor data, since they were not actually expressing number concepts but were instead things like season or day of the week which had been assigned to numbers (Winter=1, Spring=2... or Monday=1, Tuesday=2...). As was mentioned earlier, realfeel was eliminated for multicollinearity reasons. It was almost perfectly correlated with temperature, and, as discussed in that section of the assignment, the other variables which contribute to it like humidity and wind speed were more valuable than realfeel. Finally, each categorical variable was converted to a dummy variable because our algorithm cannot handle categorical data.
+
+\

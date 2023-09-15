@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Matthew Maroney’s Site - Problem Set 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/personal_logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Matthew Maroney’s Site</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html">
+ <span class="menu-text">Posts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects.html">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../resume.html">
+ <span class="menu-text">Resume</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/matthewmaroney"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com"><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/"><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#step-1" id="toc-step-1" class="nav-link active" data-scroll-target="#step-1">Step 1</a></li>
+  <li><a href="#step-2" id="toc-step-2" class="nav-link" data-scroll-target="#step-2">Step 2</a></li>
+  <li><a href="#step-3" id="toc-step-3" class="nav-link" data-scroll-target="#step-3">Step 3</a></li>
+  <li><a href="#step-5" id="toc-step-5" class="nav-link" data-scroll-target="#step-5">Step 5</a></li>
+  <li><a href="#step-6" id="toc-step-6" class="nav-link" data-scroll-target="#step-6">Step 6</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Problem Set 2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Before getting started, we’ll need to make sure the necessary packages installed and libraries loaded. Look at the list below and install if necessary before loading them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Clear everything</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load libraries</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dummy)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gamlr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="step-1" class="level2">
+<h2 class="anchored" data-anchor-id="step-1">Step 1</h2>
+<p>In this step we are seeking some understanding of the data we have obtained. Remember this is different from understanding the data we <strong>NEED</strong> to obtain to best answer a business question. We need to understand both and the differences between the two. But, because we have this <code>bikes_ps.csv</code> data set, we will take a dive into that. We first just get an idea for the dimensions and contents.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in the data set and use glimpse to get an idea.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> <span class="fu">read_csv</span>(<span class="st">"bikes_ps.csv"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(bikes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 731
+Columns: 10
+$ date        &lt;date&gt; 2011-01-01, 2011-01-02, 2011-01-03, 2011-01-04, 2011-01-0…
+$ season      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ holiday     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0…
+$ weekday     &lt;dbl&gt; 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4, 5, 6, 0, 1, 2, 3, 4…
+$ weather     &lt;dbl&gt; 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 2, 2, 2…
+$ temperature &lt;dbl&gt; 46.71653, 48.35024, 34.21239, 34.52000, 36.80056, 34.88784…
+$ realfeel    &lt;dbl&gt; 46.39865, 45.22419, 25.70131, 28.40009, 30.43728, NA, 28.0…
+$ humidity    &lt;dbl&gt; 0.805833, 0.696087, 0.437273, 0.590435, 0.436957, 0.518261…
+$ windspeed   &lt;dbl&gt; 6.679665, 10.347140, 10.337565, 6.673420, 7.780994, 3.7287…
+$ rentals     &lt;dbl&gt; 985, 801, 1349, 1562, 1600, 1606, 1510, 959, 822, 1321, 12…</code></pre>
+</div>
+</div>
+<p>My analysis: For this data set, there are 731 observations, or rows, each corresponding to a given date in 2011 or 2012. There are 10 columns, or variables, each a different feature about the given day (season, day of the week, temperature, windspeed, etc). Season, Holiday, Weekday, Weather, and Rentals are all numeric variables expressed as integers. Temperature, Realfeel, Humidity, and Windspeed are all numeric variables containing decimals. Date is expressed as a date.</p>
+<p>Now these are the default choices made by the structure of the data set along with the processing intelligence of the <code>read_csv()</code> import function. But our human understanding of the data and its use in solving a business problem are crucial to understanding what the datatype should be and whether changes will need to be made.</p>
+</section>
+<section id="step-2" class="level2">
+<h2 class="anchored" data-anchor-id="step-2">Step 2</h2>
+<p>Looking at the data we see that the numeric data types are not truly appropriate for some of the variables. Lets start with some obvious ones like <code>season</code> and <code>holiday</code>. First we need to remember that all variables/features are encoded information. And we need to discern what the original information to be encoded was and how the encoding scheme we see relates to it. For <code>season</code> we can be confident it was meant to indicate the general season in which a rental took place, such as winter, spring, summer, and fall. Instead of using text, these seasons were encoded, or represented by, a number. Now any numbers could be chosen, but typically the numbers might start at the beginning of a year and progress from there, in other words <em>maybe</em> <code>winter = 1</code>, <code>spring = 2</code>, etc. However, we cannot be truly certain without checking. First the best idea is to look at a codebook if one is provided. A codebook is a description of encoding schemes given by the person or persons who actually did the encoding. An alternative method in this case would be to look at the data column along with the season to see whether 1 corresponds to winter months etc. For brevity, we won’t do this for all features, but we’ll take a look at what it means to sleuth out these problems.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new feature representing the month of year</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># i.e., jan = 1, feb = 2, ..., dec = 12.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Then we'll create a table showing season by month</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">month</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(season, month) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      month
+season  1  2  3  4  5  6  7  8  9 10 11 12
+     1 62 57 40  0  0  0  0  0  0  0  0 22
+     2  0  0 22 60 62 40  0  0  0  0  0  0
+     3  0  0  0  0  0 20 62 62 44  0  0  0
+     4  0  0  0  0  0  0  0  0 16 62 60 40</code></pre>
+</div>
+</div>
+<p>From the above table it becomes clear that the season variable not easily dividable into months. For example season 1 does correspond to wintery months such as December, January, Februrary, and March. But March also has some season 2. Similarly, December has a lot more observations in season 4 (maybe Fall?) than season 1 - Winter. This may suggest that the variable indicates the first official day of winter on December 21 and the first official day of spring on March 21, etc.</p>
+<p>However it is encoded, the <code>season</code> feature is not truly numeric. Instead a number on a football jersey, the value is nominal and meant to be an identifier - identifying to which season a day belongs. This is called nominal or categorical data. In R, this is most commonly coded as the <code>factor</code> datatype.</p>
+<p>Other features also use numbers this way and should be represented as factors instead: <code>holiday</code>, <code>weekday</code>, and <code>weather</code>. We can now convert these to factors, and even specify new labels if we’d like.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(season, holiday, weekday, weather), factor) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">season =</span> <span class="fu">fct_recode</span>(season, <span class="st">"Winter"</span><span class="ot">=</span><span class="st">"1"</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"Spring"</span><span class="ot">=</span><span class="st">"2"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"Summer"</span><span class="ot">=</span><span class="st">"3"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                     <span class="st">"Fall"</span><span class="ot">=</span><span class="st">"4"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>My analysis: Many of the variables measured in this data set, such as season, holiday, weekday, and weather, are integer (still numeric) values in the data, i.e.&nbsp;whole, non-decimal numbers. However, they don’t truly represent numbers - the numbers are assigned to a certain condition within the variable, such as the day of the week or season (e.g.&nbsp;Monday=1, Tuesday=2… or Winter=1, Spring=2…). This makes them prime candidates for transformation into factor variables so that they are easier to work with.</p>
+<section id="other-factor-feature-explanations" class="level4">
+<h4 class="anchored" data-anchor-id="other-factor-feature-explanations">Other Factor Feature Explanations</h4>
+<ul>
+<li><p><strong>holiday</strong>: This is a binary indicator. A “1” indicates the data is considered a holiday and a 0 that it isn’t. This is categorical and so it needed to be converted to two groups.</p></li>
+<li><p><strong>weekday</strong>: Here each number represents a day of the week like Sunday, Monday, etc. This means the numbers don’t act as numbers - but instead indicate the day of the week a rental occurs. So we convert it to the categorical <code>factor</code> data type. We could easily change the labels to reflect the day of the week.</p></li>
+<li><p><strong>weather</strong>: This appears to take on values 1, 2, and 3. But what does it mean? Without a codebook this one is a problem. We cannot be sure whether this is in fact categorical or numerical, and we wouldn’t know that the categories are. Likely, it refers to weather severity or precipitation. For example, perhaps 1 is clear skies no precipitation, 2 is cloudy/rainy, and 3 is stormy. But we would need to reach out to the data creator to be sure.</p></li>
+</ul>
+</section>
+</section>
+<section id="step-3" class="level2">
+<h2 class="anchored" data-anchor-id="step-3">Step 3</h2>
+<p>Now that we’ve got everything properly recognized as numeric or factor, we can use <code>summary()</code> to look at some basic statistics and also scout out missing values. Do make things easier to read, we’ll divide summaries by numeric and factor data types.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">keep</span>(is.numeric) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  temperature       realfeel         humidity        windspeed      
+ Min.   :22.60   Min.   : 12.59   Min.   :0.0000   Min.   : 0.9322  
+ 1st Qu.:46.12   1st Qu.: 43.38   1st Qu.:0.5200   1st Qu.: 5.6182  
+ Median :59.76   Median : 61.25   Median :0.6267   Median : 7.5343  
+ Mean   :59.51   Mean   : 59.60   Mean   :0.6279   Mean   : 7.9303  
+ 3rd Qu.:73.05   3rd Qu.: 75.43   3rd Qu.:0.7302   3rd Qu.: 9.7092  
+ Max.   :90.50   Max.   :103.10   Max.   :0.9725   Max.   :21.1266  
+                 NA's   :27                                         
+    rentals    
+ Min.   :  22  
+ 1st Qu.:3152  
+ Median :4548  
+ Mean   :4504  
+ 3rd Qu.:5956  
+ Max.   :8714  
+               </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">keep</span>(is.factor) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    season    holiday weekday weather
+ Winter:181   0:710   0:105   1:463  
+ Spring:184   1: 21   1:105   2:247  
+ Summer:188           2:104   3: 21  
+ Fall  :178           3:104          
+                      4:104          
+                      5:104          
+                      6:105          </code></pre>
+</div>
+</div>
+<p>We see that we have no missing values for factor variables, and are only missing values for the <code>realfeel</code> variable in the set of numeric variables. We are missing 27 values. We could throw these out, but one problem with that is what if they are not missing by random? In other words, what if there are certain days, say when rentals are really high or low that causes this number not to be recorded? Also, although 27 observations are missing <code>realfeel</code>, they are not missing other values. By discarding them, we also throw out all the other information those observations contain. An alternative is to <em>impute</em> the missing values. This means we fill in numbers in the blank spots. But what numbers? We’re essentially making up data by trying to guess what was supposed to be recorded there. If we’re going to do this, we should first try to do no harm. Essentially, we should hope that the statistical properties of the data are not altered or biased by our choice of value. There are number of ways to do this, but for this assignment you’re asked to do the median value imputation. For illustration purposes I’m going to create a copy to compare (you don’t need to do this).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">realfeel_orig =</span> realfeel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, lets impute the missing values and compare.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">realfeel =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(realfeel),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">median</span>(realfeel, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                           realfeel))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The above code uses <code>ifelse</code> logic to replace values. It asks a question (checks a condition) and then does different actions based on the answer.</p>
+<p>Is realfeel missing? (<code>is.na(realfeel)</code>):</p>
+<ul>
+<li><p>YES (TRUE): replace with <code>median(reelfeel, na.rm = TRUE)</code>.</p></li>
+<li><p>NO (FALSE): replace with <code>realfeel</code> (which leaves it unchanged, since we’re just replacing it with itself).</p></li>
+</ul>
+<p>Now we can compare the resulting distributions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(realfeel, realfeel_orig) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    realfeel      realfeel_orig   
+ Min.   : 12.59   Min.   : 12.59  
+ 1st Qu.: 43.80   1st Qu.: 43.38  
+ Median : 61.25   Median : 61.25  
+ Mean   : 59.66   Mean   : 59.60  
+ 3rd Qu.: 74.98   3rd Qu.: 75.43  
+ Max.   :103.10   Max.   :103.10  
+                  NA's   :27      </code></pre>
+</div>
+</div>
+<p>Looking at the above distributions, we see that <code>realfeel</code> doesn’t have any missing values and is the same median and basically the same mean. Extreme points are not changed, although the 1st and 3rd quartiles changed a smidgen.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the copy of original realfeel</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>realfeel_orig)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Step 4</p>
+<p>Now we need to gain some understanding of what we’re trying to predict, <code>rentals</code>. This involves understanding what the variable is and its distribution. Rentals appears to encode the total numbers of bike rentals that occurred on a given date. This is count data. We can use both descriptive statistics as well as a histogram to get a picture. Additionally, we can look at a picture of rentals over time to see if there is some trending.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span> <span class="fu">select</span>(rentals) <span class="sc">%&gt;%</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    rentals    
+ Min.   :  22  
+ 1st Qu.:3152  
+ Median :4548  
+ Mean   :4504  
+ 3rd Qu.:5956  
+ Max.   :8714  </code></pre>
+</div>
+</div>
+<p>The lowest recorded number is 22 rentals, and the max a whopping 8,714 rentals! Across the data the mean is roughly 4500 rentals and the median is only a little higher suggesting that there shouldn’t be an extreme skew and it’s fairly symmetric.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>rentals)) <span class="sc">+</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y=</span><span class="fu">after_stat</span>(density)),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill =</span> <span class="st">"aquamarine"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"aquamarine3"</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Daily Bike Rentals"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Rentals (count)"</span>) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_clean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Fortunately, we don’t seem to have a huge number of outliers and the distribution is not highly skewed. This means that we might not need to make a log-transformation of this feature to make it more normal. However, one thing to note is that it is a tri-model looking distribution. There are peaks in the data which suggest that there might be three different over-lapping normal distributions. A low, middle, and high one.</p>
+<p>My analysis: The distribution of rentals is not skewed strongly to the left or right. Transformation of the data is thus not necessary. The data also has three humps, two smaller ones centered around ~2000 rentals and ~7300 rentals respectively, and the largest in the center of the data at ~4600 rentals. These are known as tri-modal distributions. This indicates a possibility that rental days could be sorted into low, middle, and high buckets, based on variables like time of week, temperature, and wind. There do not appear to be a substantial number of outliers.</p>
+</section>
+<section id="step-5" class="level2">
+<h2 class="anchored" data-anchor-id="step-5">Step 5</h2>
+<p>Many of the supervised learning algorithms can be helped or hurt by the relationships between features that will be used as predictors. We need to understand the distributions of each variable, looking for skew, outliers, and any other weirdness. This could involve histograms or boxplots of the variables. We can use scatter plots to look at relationships between predictors. For easier comparison we can also use correlation matrices to show statistically linear relationships.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">keep</span>(is.numeric) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggpairs</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>First off we can see that <code>temperature</code> and <code>realfeel</code> have an almost perfectly linear relationship. The correlation is 0.96! This is a suspiciously strong relationship. In fact, this usually means that one variable is a function of the other. Indeed, <code>realfeel</code> is a relationship between temperature and humidity and wind that is mean to incorporate what temperature <em>it feels like to a human</em>. In such a case, we will want to leave out a variable. Either <code>realfeel</code> or the other features that go into it.</p>
+<p>My analysis: realfeel will be excluded. It is near perfectly correlated with temperature, since temperature is based on it. We could disregard temperature and the other variables here which contribute to how it really feels outside, i.e.&nbsp;humidity, windspeed, etc, or we could eliminate the use of realfeel. Eliminating the use of realfeel is useful because the other variables, like humidity and wind speed, tell us important things about the conditions for biking that realfeel doesn’t. One day could be 65 degrees with no wind and no humidity, leading to a realfeel of 65, or it could be 80 degrees with such substantial wind that there is a wind chill of -15, leading to a realfeel of 65 degrees even with no humidity, and a much worse day for biking. Thus, it is better to eliminate realfeel than temperature and all the variables used in concert with it.</p>
+<p>The distribution plots do not look particularly alarming. And the scatterplots don’t show any other overwhelmingly strong relationships. What we can see, is that there is a positive and nonlinear relationship between temperature and rentals. Warmer temps are associated with more rentals (not surprising). But eventually, warmer temperatures result in weather that is too hot for comfort - leading to decreased rentals.</p>
+<p>We can also check these correlations with <code>corrplot</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">keep</span>(is.numeric) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">corrplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Sometimes we need to convert features to achieve different objectives.</p>
+<ol type="1">
+<li>We might transform a feature to make it easier for our learning algorithm to use, or</li>
+<li>we might transform a feature to put it on the same or similar scale with the the other features.</li>
+</ol>
+<p>We’re going to Z-score normalize the <code>temperature</code> feature. Our reason is mostly arbitrary, but one benefit is that after the transformation the mean will be zero. Positive numbers will represent above average temperatures and negative below average ones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temperature =</span> (temperature <span class="sc">-</span> <span class="fu">mean</span>(temperature))<span class="sc">/</span><span class="fu">sd</span>(temperature))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(temperature) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  temperature      
+ Min.   :-2.38324  
+ 1st Qu.:-0.86479  
+ Median : 0.01611  
+ Mean   : 0.00000  
+ 3rd Qu.: 0.87425  
+ Max.   : 2.00098  </code></pre>
+</div>
+</div>
+<p>We can min-max normalize the wind variable. This will take all values of the feature and cram it into the interval <span class="math inline">\([0, 1]\)</span>. It essentially puts a feature into a percent range.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">windspeed =</span> (windspeed <span class="sc">-</span> <span class="fu">min</span>(windspeed))<span class="sc">/</span>(<span class="fu">max</span>(windspeed)<span class="sc">-</span><span class="fu">min</span>(windspeed)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A very important step, and a very common one required by many learning algorithms, is converting all categorical variables into dummy variables. This can be done many different ways in R. The <code>dummy</code> package does make it easier, however.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert every factor type feature into </span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a collection dummy variables.</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>bikes_dummies <span class="ot">=</span> <span class="fu">dummy</span>(bikes, <span class="at">int =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Before running the <code>dummy()</code> function we had 10 variables in the dataset. The result of the function is a new dataset with only the dummy variables generated from the factor variables in <code>bikes</code>. At this point we can replace the factor variables with the dummy ones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>bikes_num <span class="ot">=</span> bikes <span class="sc">%&gt;%</span> <span class="fu">keep</span>(is.numeric)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> <span class="fu">bind_cols</span>(bikes_num, bikes_dummies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-6" class="level2">
+<h2 class="anchored" data-anchor-id="step-6">Step 6</h2>
+<p>We’re going to perform a penalized form of regression known as LASSO to find a decent predictive model. We’ll need to do a few things first. We need to get rid variables we don’t intend to have as predictors. The <code>date</code> and <code>realfeel</code> features will be removed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>realfeel) <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">temperature2 =</span> temperature<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Normally, for a linear regression, you’d need to remove one dummy variable from a categorical variable. For example, season has 4 values (Winter, Spring, Fall, and Summer). We have dummy variable for each, but we need to omit one in order for it to work. But with LASSO, its okay and actually better to include them all and let the algorithm decide which to eliminate.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate predictors from target feature.</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>rentals <span class="ot">=</span> bikes<span class="sc">$</span>rentals</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">=</span> <span class="fu">as.matrix</span>(<span class="fu">select</span>(bikes, <span class="sc">-</span>rentals))</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">=</span> predictors </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate model</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>cv.model <span class="ot">=</span> <span class="fu">cv.gamlr</span>(<span class="at">x=</span>predictors, <span class="at">y=</span>rentals)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cv.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Index_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>betamin <span class="ot">=</span> <span class="fu">coef</span>(cv.model, <span class="at">select =</span> <span class="st">"min"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>betamin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>21 x 1 sparse Matrix of class "dgCMatrix"
+                     seg98
+intercept      7230.726563
+temperature     981.069533
+humidity      -3045.345455
+windspeed     -1894.081850
+season_Winter  -734.451838
+season_Spring  -114.725933
+season_Summer    16.334457
+season_Fall     304.253490
+holiday_0       461.960081
+holiday_1         .       
+weekday_0      -280.660838
+weekday_1      -112.214878
+weekday_2       -24.389640
+weekday_3         .       
+weekday_4         .       
+weekday_5         3.456294
+weekday_6        64.987612
+weather_1       257.355107
+weather_2         .       
+weather_3     -1680.583291
+temperature2   -539.486601</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="ot">=</span> bikes <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">as.numeric</span>(<span class="fu">predict</span>(cv.model, predictors)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>bikes <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>rentals, <span class="at">y=</span>pred)) <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Index_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Discussion</p>
+<p>Discuss whether you think the features you have in the data make sense for learning to predict daily bike rentals.</p>
+<p>The features in my data do make sense for predicting daily bike rentals. Many factors influence a person’s decision to bike versus taking other forms of transportation like public transit or a car. These include the type of trip they are taking (business/commute / pleasure / errands / etc) and the weather and the various considerations there. Our data is spot on here. We have information on whether a given day is a holiday, the weather conditions like temperature, wind speed, and humidity, and the day of the week. Weather conditions are particularly useful as on days with heavy rain, snow, or excessive heat people are likely not to bike for exercise or pleasure. The same is true for days with excessive humidity or heavy winds. The data on day of the week is useful as some individuals may use our bike rental service to commute to work. More individuals are also likely to bike on the weekends for pleasure purposes, when they are off work. We can also use the weather and day of the week data in conjutnion to, for example, project how many rentals we may lose to commuters taking public transit on days with prohibitive weather. Holiday data is useful because some with short distances to travel to family or friends may use our bikes. It’s more likely, though, that this would be useful to project falling rentals as people stay in for the Holidays or move long distances via plane or carpooling.</p>
+<p>Discuss what is means in this case to train or “fit” a model to the data you prepared.</p>
+<p>“Fitting” a model to the data in this case means finding the outputs for a set of inputs that minimize the sum of squared errors across the whole range of inputs. Error is the actual value minus our predicted value, and is squared so that if the error is negative it is still registered as error. In this case our inputs are the data regarding weather, day of week, humidity, whether it is a holiday, and our other variables. The algorithm learns what values for these variables lead to high levels of rentals and which lead to low levels of rentals. This allows it to create a model through which projected weather, humidity, wind speed, etc values can be input to generate a projected number of rentals as an output. The goal is to minimize the amount of error present, i.e.&nbsp;for the projections to be as close as possible to the observed values.</p>
+<p>Discuss which preparations you did were required to make the learning algorithm work, and which were not strictly required, but maybe are a good idea.</p>
+<p>Cleaning the data was an important step in making the learning algorithm. There was a substantial amount of missing data for the realfeel variable, and, even though it ended up being eliminated for multicollinearity reasons, it was good to feed the algorithm a clean data set. We also converted some variables, which were expressed numerically, to factor data, since they were not actually expressing number concepts but were instead things like season or day of the week which had been assigned to numbers (Winter=1, Spring=2… or Monday=1, Tuesday=2…). As was mentioned earlier, realfeel was eliminated for multicollinearity reasons. It was almost perfectly correlated with temperature, and, as discussed in that section of the assignment, the other variables which contribute to it like humidity and wind speed were more valuable than realfeel. Finally, each categorical variable was converted to a dummy variable because our algorithm cannot handle categorical data.</p>
+<p><br>
+</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
