@@ -1,0 +1,303 @@
+---
+title: "Corolla Pricing with LASSO"
+format: html
+editor: visual
+---
+
+The nonstandard R packages you will need to have installed and load for this document are all contained below.
+
+```{r}
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+rm(list = ls())
+```
+
+```{r}
+install.packages("tidyverse")
+```
+
+```{r}
+#| message: false
+library(tidyverse)
+library(glmnet)
+library(lubridate)
+library(caret)
+library(dummy)
+library(rpart)
+library(rpart.plot)
+```
+
+## Linear Regression
+
+A typical approach to prediction problems involves training a model that minimizes *deviance*. What is deviance? Well its essentially the pile of errors your model builds up over a sample. And while deviance takes different forms for different types of problems (like regression vs. classification), in regression problems the *sum of squared errors* (SSE) is commonly use as the *deviance* of the trained model from the observed outcomes in the data. For example, if we have a sample of 100 observations, then for each observation $i$, we can view the actual outcome, $y_i$. and compare it our model's predicted outcome $\hat{y_i}$, leading to an error $e_i = y_i - \hat{y_i}$ and squared error $e_i2 = (y_i - \hat{y_i})$. We can then pile up all those 100 $e^2$s to get a pile of errors. When a model generates a smaller pile of errors on a sample than another, then that model is doing a better job of prediction on that sample.
+
+For a linear regression model we have a model that is formed by a simple equation. If we have $k$ predictors then our model can be expressed as,
+
+$$
+\begin{align}
+\hat{y_i} &= \hat{\beta_0} + \hat{\beta_1}x_{1i} + \hat{\beta_2}x_{2i} + \cdots + \hat{\beta_k}x_{ki} \nonumber \\
+&= \mathbf{x}_i'\hat{\boldsymbol{\beta}}
+\end{align} 
+$$
+
+where we have vectors, $\mathbf{x}_i = [x_{1i}, x_{2i}, \cdots, x_{ki}]$ and $\hat{\boldsymbol{\beta}} = [\hat{\beta_0}, \hat{\beta_1}, \cdots, \hat{\beta_k}]$. For $n$ observations in a sample we are making predictions for, the deviance (or sum of squared errors - SSE) depends on the specific intercept and slopes we choose, i.e., which $\hat{\boldsymbol{\beta}}$.
+
+$$
+\text{dev}\left(\hat{\boldsymbol{\beta}}\right) = \sum_{i=1}^{n} \left(y_i - \mathbf{x}_i \hat{\boldsymbol{\beta}} \right)^2
+$$
+
+We find the $\hat{\boldsymbol{\beta}}$ for a particular sample by figuring out which values of $\hat{\boldsymbol{\beta}}$ minimize deviance on that sample.
+
+In predictive modeling, what we care most about is the model's performance on new (future) data. When we calculate deviance on the data used for training we call it *in-sample deviance*. But what we really care about is *out-of-sample* (OOS) deviance. We approximate this the best we can by using data that wasn't involved in the training process (i.e., test data, cross-validation error, etc.).
+
+```{r}
+#| message: false
+
+# Read in the data and prep data types.
+cars = read_csv('ToyotaCorolla.csv') %>%
+  select(-Id, -Model, -Mfg_Month, -Cylinders, -Quarterly_Tax) %>%
+  rename(Age = Age_08_04) %>%
+  mutate_at(vars(-one_of(
+    c('Price',
+      'Age',
+      'KM',
+      'HP',
+      'CC',
+      'Weight')
+  )), .funs = factor)
+```
+
+**My analysis: This data set, cars, tracks 87 variables over 1436 observations. It is tracking the price of Toyota Corollas based on a number of factors, so each variable is a different feature of the Corolla and each observation is a different Corolla. There is no missing data in this set so we do not need to make a plan to deal with that.**
+
+```{r}
+hist(cars$Price)
+```
+
+**My analysis: The Price variable looks alright for a linear regression. While the distribution does look right skewed, this is expected as not many Corollas would be dirt cheap (on the far left side of the distribution). The data does not have an excessive number of outliers.**
+
+```{r}
+featurePlot(x = cars$Age, 
+            y = cars$Price, 
+            plot = "pairs",
+            auto.key = list(columns = 3))
+```
+
+```{r}
+featurePlot(x = cars$KM, 
+            y = cars$Price, 
+            plot = "pairs",
+            auto.key = list(columns = 3))
+```
+
+```{r}
+featurePlot(x = cars$HP, 
+            y = cars$Price, 
+            plot = "pairs",
+            auto.key = list(columns = 3))
+```
+
+```{r}
+featurePlot(x = cars$Weight, 
+            y = cars$Price, 
+            plot = "pairs",
+            auto.key = list(columns = 3))
+```
+
+```{r}
+featurePlot(x = cars$CC, 
+            y = cars$Price, 
+            plot = "pairs",
+            auto.key = list(columns = 3))
+```
+
+**My analysis: Some of these variables do have a relationship with Price. Age and KM have the strongest relationship, both being strongly negative, and age being the stronger of the two. This is likely because age/level of use degrades the value of a car quickly. Additionally, as age increases, there are more new features on newer cars which make them more valuable. This occurs independent of the level of driving a car is put though, making age more reliable than just KM. Weight is another variable I tested which has a strong relationship, this one also negative.**
+
+**My analysis: None of the relationships seem too strongly related. Some are not continuous and thus do not have real distributions but are also thus not too strongly correlated that they must be eliminated. None of the continuous variables appeared to correlate even closely to 1:1 with price, as can be observed in my featurePlots above.**
+
+As a side note when building models with lots of categorical variables, you'll want to often inspect how big these 'groups' are. For `Guarantee_Period`, there are several values, but we have periods 13, 18, 20, 24, 28, and 36 which each have 1 or 4 cars. This will create problems for us as models which rely on really rare categories. Especially if those categories are absent in future data.
+
+```{r}
+cars %>%
+  select(Guarantee_Period) %>%
+  table()
+```
+
+Based on the above, we will only want to include a few guarantee periods as dummies (3, 6, and 12).
+
+```{r}
+# Convert all factors to dummy vars.
+car_dum = dummy(cars, int = TRUE)
+car_num = cars %>%
+  keep(is.numeric)
+cars = bind_cols(car_num, car_dum)
+rm(car_dum, car_num)
+```
+
+```{r}
+# Partition the data.
+set.seed(5970)
+samp = createDataPartition(cars$Price, p = 0.65, list = FALSE)
+training = cars[samp, ]
+testing = cars[-samp, ]
+rm(samp)
+```
+
+```{r}
+# For OLS remove one dummy from each categorical var
+training_ols = training %>%
+  select(-Mfg_Year_1998,
+         -Fuel_Type_CNG,
+         -Met_Color_0,
+         -Color_Beige,
+         -Automatic_0,
+         -Doors_2,
+         -Gears_3,
+         -Mfr_Guarantee_0,
+         -BOVAG_Guarantee_0,
+         -Guarantee_Period_13,
+         -Guarantee_Period_18,
+         -Guarantee_Period_20,
+         -Guarantee_Period_24,
+         -Guarantee_Period_28,
+         -Guarantee_Period_36,
+         -ABS_0,
+         -Airbag_1_0,
+         -Airbag_2_0,
+         -Airco_0,
+         -Automatic_airco_0,
+         -Boardcomputer_0,
+         -CD_Player_0,
+         -Central_Lock_0,
+         -Powered_Windows_0,
+         -Power_Steering_0,
+         -Radio_0,
+         -Mistlamps_0,
+         -Sport_Model_0,
+         -Backseat_Divider_0,
+         -Metallic_Rim_0,
+         -Radio_cassette_0,
+         -Parking_Assistant_0,
+         -Tow_Bar_0
+         )
+```
+
+```{r}
+# Train Ordinary Least Squares
+ols1 = lm(Price ~ .,
+          data = training_ols)
+coef(ols1)
+```
+
+```{r}
+# In-sample Deviance Measures
+caret::postResample(pred = ols1$fitted.values,
+                    obs = training_ols$Price)
+```
+
+```{r}
+# Out-of-sample Deviance Measures
+caret::postResample(pred = predict(ols1, newdata = testing),
+                    obs = testing$Price)
+```
+
+```{r}
+ols_rmse_test = as.numeric(caret::postResample(pred = predict(ols1, newdata = testing),
+                    obs = testing$Price)["RMSE"])
+```
+
+## Regularization
+
+In settings where you have lots of features that you might include in your model, you need to be careful to select the best model for predicting *future* data and avoid overfit. How can we do this?
+
+1.  Use a "recipe" that provides a lot of good array of candidate models.
+2.  Then sort through the pile and select from among the candidates to minimize the error on new data.
+
+Behind the scenes that this means is changing the pile of errors (deviance) we are trying to minimize in a way that will *shrink* the coefficient (effect) a given feature can have on our model. If its coefficient is zero, for example $\hat{\beta}_i = 0$ , then it has no impact. If $\hat{\beta_i} \neq 0$ then the model has some effect and the further from zero a coefficient is, the bigger its impact on the model. Bigger impacts can lead to better predictions when its a true signal, but lead to bigger errors when the relationship is noise!!! So our goal is to let coefficients on real signals grow carefully, while shrinking coefficients on noise to zero. We accomplish this by measuring the size of $\hat{\boldsymbol{\beta}}$ in addition to its effect on deviance. In other words we now want to choose values for $\hat{\boldsymbol{\beta}}$ so as to minmize
+
+$$
+\text{dev}\left(\hat{\boldsymbol{\beta}}\right) + \lambda \cdot \text{L1Norm}\left(\hat{\boldsymbol{\beta}}\right)
+$$
+
+where $\text{L1Norm()}$ is the "size" of our coefficients $\hat{\boldsymbol{\beta}}$ and this term is mathematically determined. The number $\lambda$ is a penalty or the "price" we charge ourselves for letting $\hat{\boldsymbol{\beta}}$ get too big. But this number is not pre-determined. It is a *hyperparameter* that we have to choose before doing a minimization problem.
+
+-   As $\lambda$ gets larger we want to shrink the size of $\hat{\boldsymbol{\beta}}$ so that we have fewer nonzero coefficients (making the model more sparse) and the nonzero ones are closer to zero.
+
+-   As $\lambda$ gets smaller we want to allow the size of $\hat{\boldsymbol{\beta}}$ to grow meaning coefficients get bigger and
+
+Any value of $\lambda$ we choose will have an impact on the coefficients learned from the data, which affects our predictions. Each value of $\lambda$ we choose can be referred to as a regularization path. Again if $\lambda$ is a price, then each price we set gives us a different prediction/error capacity. Instead of choosing just one value and hoping for the best, we can solve the problem and calculate different vector of coefficients $\hat{\boldsymbol{\beta}}$ for each value of $\lambda$. By default, the `glmnet` package will calculate coefficients for each of 100 different $\lambda$ penalty values.
+
+```{r}
+X = as.matrix(select(training, -Price))
+y = training$Price
+
+lasso_fit = glmnet(X, y)
+plot(lasso_fit, "lambda")
+```
+
+The plot above shows the model results over different $\lambda$ values. Imagine 100 vertical slices (represeneted by x-axis values) for different choices of $\lambda$. The lines in the graph represent the values (sizes) of coefficients for potential features in our model. At each x-axis value, you can see which features have nonzero coefficients and how big or small some may be. As we go right, the value of $\lambda$ increases until all coefficients shrink to zero and the model is extremely sparse. Low values of $\lambda$ are on the left, where most all features have larger, non-zero coefficients and our model is quite large.
+
+We can look at the model that results from any one regularization path by choosing a $\lambda$ value to look at. You'll see higher values lead to sparse models, lower values lead to complex models.
+
+```{r}
+coef(lasso_fit, s = exp(2))
+```
+
+Which path is best for prediction? We can compare performance on the training data vs the testing data over all regularization paths and also compare to our OLS "kitchen sink" model in which we just added everything without regularization.
+
+```{r}
+logLambda = seq(0, 8, 0.1)
+testing_mat = as.matrix(testing)
+RMSE_train = c()
+RMSE_test = c()
+for (i in logLambda) {
+  train_i = as.numeric(postResample(pred=predict(lasso_fit, X, s=exp(i)), obs=y)["RMSE"])
+  RMSE_train = append(RMSE_train, train_i)
+  test_i = postResample(pred=predict(lasso_fit, testing_mat[,2:87], s=exp(i)), obs=testing_mat[,1])["RMSE"]
+  RMSE_test = append(RMSE_test, as.numeric(test_i))
+}
+plot(x = logLambda, y = RMSE_train, type='l', col = "blue",
+     main = "RMSE Deviance over Lambda: Train vs Test",
+     xlab = "Log Lambda",
+     ylab = "RMSE Deviance")
+lines(x = logLambda, y = RMSE_test, col="red", lw=2)
+abline(h=ols_rmse_test, col="black")
+legend(3.25, 2700, legend = c("LASSO Training", "LASSO Testing", "OLS Testing"), fill=c("blue", "red", "black"))
+```
+
+Cross-validated Choice of $\lambda$
+
+But what value of $\lambda$ do we choose to get the best model? From above we'd like to minimize deviance/error on new future data. Our test data gives us an indication of where this might be. We can use cross-validation to check each value of $\lambda$ and find the one that gives us minimum or near-minimum error on hold-out data. This is our best guess as to performance on new future data.
+
+```{r}
+cv_lasso = cv.glmnet(X, y, type.measure = "mse", nfolds=20)
+plot(cv_lasso)
+```
+
+```{r}
+coef(cv_lasso, s = "lambda.min")
+```
+
+```{r}
+coef(cv_lasso, s = "lambda.1se")
+```
+
+Compare to OLS
+
+Finally, lets see what this regularization process has yielded us. We first fit a plain OLS model with all variables, something that might likely lead to overfitting and including lots of noise. Overall prediction was not that great. Lets see how much better we do on the test data with regularization and cross-validation.
+
+```{r}
+ols_res = postResample(pred=predict(ols1, testing), obs=testing$Price)
+print(ols_res)
+```
+
+```{r}
+cvlasso_res = postResample(pred=predict(cv_lasso, testing_mat[,2:87], s="lambda.min"),
+             obs=testing_mat[,1])
+print(cvlasso_res)
+```
+
+```{r}
+cvlasso_rmse = as.numeric(cvlasso_res["RMSE"])
+paste0("Regularization reduced RMSE on test data by: ", round((ols_rmse_test-cvlasso_rmse)/ols_rmse_test*100,2), "%")
+```
+
+**My analysis: After regularization, my model is effective for predicting the price of Corollas for CorollaCrowd. Identifying and removing variables which caused overfitting in the model reduced RMSE by 63.34% and increased the Rsquared, the extent to which the variables in the model explain the variation in the data, by \~43%. This means our model is much more effective at capturing and using important variables to determine a given Corolla's value. The model is not perfect - the Rsquared of the regularized model is still only 89%, meaning it does not explain over 10% of the variation in the data. This means, though, that our model is a generally good predictor.**
