@@ -1,0 +1,294 @@
+---
+title: "Final Project"
+author: "Matthew Maroney"
+date: "`r Sys.Date()`"
+format: html
+---
+
+In this project, I will examine political polarization. Polarization has been an incredibly impactful trend in recent American politics. Both the left and right in this country are becoming more extreme over time. Congress has failed to produce bipartisan cooperation for at least the past two decades. Each party uses the filibuster to hold the other hostage when they are in power. This leaves America falling behind the rest of the world as we are not able to respond effectively to problems the country faces.
+
+In this project I will analyze a set of tweets from politicians across the country. I will analyze the sentiment of words in their tweet based on whether the tweet is partisan or nonpartisan. From that, I hope to glean information about the kind of words politicans are using to describe partisan vs. nonpartisan issues. If my intuitions are correct, partisan tweets will use more negative language than nonpartisan tweets. This will backup arguments that political polartization is happening in this country and that bipartisan cooperation is extremely difficult.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r  message=FALSE}
+rm(list=ls())
+library(tidyverse)
+library(tidytext)
+library(lubridate)
+library(ggthemes)
+library(SnowballC)
+```
+
+```{r}
+data2 = read_csv("political_social_media.csv") %>%
+  select(-"_golden", -"_unit_state", -"_trusted_judgments", -"_last_judgment_at", -"audience:confidence", -message, -"message:confidence", -"orig__golden", -"audience_gold", -"bias_gold", -bioid, -embed, -id, -label, -"message_gold", -source, -"bias:confidence", -"_unit_id")
+```
+
+```{r}
+data3 = read_csv("political_social_media.csv") %>%
+  select(-"_golden", -"_unit_state", -"_trusted_judgments", -"_last_judgment_at", -"audience:confidence", -"message:confidence", -"orig__golden", -"audience_gold", -"bias_gold", -bioid, -embed, -id, -label, -"message_gold", -source, -"bias:confidence", -"_unit_id", -bias, -audience)
+```
+
+```{r}
+data.token = data2 %>%
+  unnest_tokens(word, text, token = "words") %>% 
+  select(-audience)
+```
+
+Here, I've "tokenized" my data. This means I've extracted each individual word from all the tweets and categorized them by partisan/nonpartisan based on the original tweet the word came from.
+
+```{r}
+data.token %>%
+  count(word, sort = TRUE) %>%
+  head(n = 10)
+```
+
+Here, I've found the most common words across tweets. I will go on to remove "stop words," which are words which are not useful for my analysis, such as overly common words like "the," "to," "and," or "of," alongside things which are not words which tokenization still gathered up, such as "t.co" or "http."
+
+```{r}
+data("stop_words")
+data.token_nostop = data.token %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
+```
+
+```{r}
+data.token_nostop %>%
+  count(word, sort = TRUE) %>%
+  head(n = 100)
+```
+
+```{r}
+sent_words = get_sentiments("afinn")
+```
+
+```{r}
+tweet.sentiments = data.token_nostop %>%
+  inner_join(sent_words, by = "word") %>%
+  ungroup() %>%
+  distinct()
+```
+
+```{r}
+partisan.sentiments = tweet.sentiments %>%
+  filter(bias=="partisan")
+```
+
+```{r}
+neutral.sentiments = tweet.sentiments %>%
+  filter(bias=="neutral")
+```
+
+```{r}
+mean(neutral.sentiments$value)
+```
+
+```{r}
+mean(partisan.sentiments$value)
+```
+
+```{r}
+partisan.value = partisan.sentiments$value 
+hist(partisan.value)
+```
+
+```{r}
+neutral.value = neutral.sentiments$value
+hist(neutral.value)
+```
+
+```{r}
+data.token2 = data2 %>%
+  unnest_tokens(word, text, token = "words") %>% 
+  select(-bias)
+```
+
+```{r}
+data("stop_words")
+data.token_nostop2 = data.token2 %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
+```
+
+```{r}
+tweet.sentiments2 = data.token_nostop2 %>%
+  inner_join(sent_words, by = "word") %>%
+  ungroup() %>%
+  distinct()
+```
+
+```{r}
+national.sentiments = tweet.sentiments2 %>%
+  filter(audience=="national")
+```
+
+```{r}
+cons.sentiments = tweet.sentiments2 %>%
+  filter(audience=="constituency")
+```
+
+```{r}
+mean(national.sentiments$value)
+```
+
+```{r}
+mean(cons.sentiments$value)
+```
+
+```{r}
+national.value=national.sentiments$value
+hist(national.value)
+```
+
+```{r}
+cons.value=cons.sentiments$value
+hist(cons.value)
+```
+
+```{r}
+data.token3 = data3 %>%
+  unnest_tokens(word, text, token = "words")
+```
+
+```{r}
+data("stop_words")
+data.token_nostop3 = data.token3 %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
+```
+
+```{r}
+tweet.sentiments3 = data.token_nostop3 %>%
+  inner_join(sent_words, by = "word") %>%
+  ungroup() %>%
+  distinct()
+```
+
+```{r}
+policy.sentiments = tweet.sentiments3 %>%
+  filter(message=="policy")
+```
+
+```{r}
+attack.sentiments = tweet.sentiments3 %>%
+  filter(message=="attack")
+```
+
+```{r}
+supp.sentiments = tweet.sentiments3 %>%
+  filter(message=="support")
+```
+
+```{r}
+info.sentiments = tweet.sentiments3 %>%
+  filter(message=="information")
+```
+
+```{r}
+personal.sentiments = tweet.sentiments3 %>%
+  filter(message=="personal")
+```
+
+```{r}
+other.sentiments = tweet.sentiments3 %>%
+  filter(message=="other")
+```
+
+```{r}
+mobil.sentiments = tweet.sentiments3 %>%
+  filter(message=="mobilization")
+```
+
+```{r}
+cons.sentiments.msg = tweet.sentiments3 %>%
+  filter(message=="constituency")
+```
+
+```{r}
+media.sentiments = tweet.sentiments3 %>%
+  filter(message=="media")
+```
+
+```{r}
+mean(policy.sentiments$value)
+```
+
+```{r}
+mean(attack.sentiments$value)
+```
+
+```{r}
+mean(supp.sentiments$value)
+```
+
+```{r}
+mean(info.sentiments$value)
+```
+
+```{r}
+mean(personal.sentiments$value)
+```
+
+```{r}
+mean(other.sentiments$value)
+```
+
+```{r}
+mean(mobil.sentiments$value)
+```
+
+```{r}
+mean(cons.sentiments.msg$value)
+```
+
+```{r}
+mean(media.sentiments$value)
+```
+
+```{r}
+policy.value=policy.sentiments$value
+hist(policy.value)
+```
+
+```{r}
+attack.value=attack.sentiments$value
+hist(attack.value)
+```
+
+```{r}
+supp.value=supp.sentiments$value
+hist(supp.value)
+```
+
+```{r}
+info.value=info.sentiments$value
+hist(info.value)
+```
+
+```{r}
+personal.value=personal.sentiments$value
+hist(personal.value)
+```
+
+```{r}
+other.value=other.sentiments$value
+hist(other.value)
+```
+
+```{r}
+mobil.value=mobil.sentiments$value
+hist(mobil.value)
+```
+
+```{r}
+cons.msg.value=cons.sentiments.msg$value
+hist(cons.msg.value)
+```
+
+```{r}
+media.value=media.sentiments$value
+hist(media.value)
+```
