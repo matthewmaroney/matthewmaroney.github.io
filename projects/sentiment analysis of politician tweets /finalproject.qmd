@@ -13,6 +13,8 @@ In this project I will analyze a set of tweets from politicians across the count
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Loading Necessary Packages
+
 ```{r  message=FALSE}
 rm(list=ls())
 library(tidyverse)
@@ -21,6 +23,8 @@ library(lubridate)
 library(ggthemes)
 library(SnowballC)
 ```
+
+Reading in data and eliminating unnecessary variables
 
 ```{r}
 data2 = read_csv("political_social_media.csv") %>%
@@ -55,11 +59,15 @@ data.token_nostop = data.token %>%
   filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
 ```
 
+Here, I've removed "stop words." These are common words (or other things which commonly appear in tweets from politicians, like numbers and years) which aren't relevant for sentiment analysis. I've removed them from my data set here and will use this code many times again throughout this project to remove the same set of stop words from the data.
+
 ```{r}
 data.token_nostop %>%
   count(word, sort = TRUE) %>%
   head(n = 100)
 ```
+
+This is the new list of the most frequent words after stop words have been removed.
 
 ```{r}
 sent_words = get_sentiments("afinn")
@@ -72,18 +80,15 @@ tweet.sentiments = data.token_nostop %>%
   distinct()
 ```
 
+Here, I've brought in "sent_words," this is a large set of words each with a sentiment score assigned to it based on its positivity or negativity.
+
+Next, I've assigned each word a sentiment score based on what's in the "sent_words" data set.
+
+Partisan Tweet Sentiments - Bias Variable
+
 ```{r}
 partisan.sentiments = tweet.sentiments %>%
   filter(bias=="partisan")
-```
-
-```{r}
-neutral.sentiments = tweet.sentiments %>%
-  filter(bias=="neutral")
-```
-
-```{r}
-mean(neutral.sentiments$value)
 ```
 
 ```{r}
@@ -95,10 +100,29 @@ partisan.value = partisan.sentiments$value
 hist(partisan.value)
 ```
 
+The mean sentiment value for any given word in tweets marked as "partisan" is -0.24. As you can see from the histogram of sentiment values of words in partisan tweets, there are many more negative words than positive words. This indicates politicians use more charged and negative language when discussing partisan issues.
+
+Neutral Tweet Sentiments - Bias Variable
+
+```{r}
+neutral.sentiments = tweet.sentiments %>%
+  filter(bias=="neutral")
+```
+
+```{r}
+mean(neutral.sentiments$value)
+```
+
 ```{r}
 neutral.value = neutral.sentiments$value
 hist(neutral.value)
 ```
+
+The mean sentiment for any given word in tweets marked as "neutral" is 0.02, and looking at the histogram there is not that much of a difference in the frequency of positive and negative words. While negative words have a higher peak between -2 and -3, words of low positive sentiment are present more often than words of low negative sentiment, balancing the distribution out.
+
+Overall, we can see that words in partisan tweets are typically more negative. This reflects and backs up the trend of political polarization and the collapse of bipartisanship discussed in the exposition.
+
+Tokenization and Sentiment Gathering - Audience Variable
 
 ```{r}
 data.token2 = data2 %>%
@@ -120,14 +144,11 @@ tweet.sentiments2 = data.token_nostop2 %>%
   distinct()
 ```
 
+Sentiment of Tweets aimed at the Nation - Audience Variable
+
 ```{r}
 national.sentiments = tweet.sentiments2 %>%
   filter(audience=="national")
-```
-
-```{r}
-cons.sentiments = tweet.sentiments2 %>%
-  filter(audience=="constituency")
 ```
 
 ```{r}
@@ -135,18 +156,33 @@ mean(national.sentiments$value)
 ```
 
 ```{r}
-mean(cons.sentiments$value)
+national.value=national.sentiments$value
+hist(national.value)
+```
+
+Mean sentiment for words in tweets aimed at the national constituency is -0.13. This is backed up by the histogram which shows words with negative sentiment are much more common in these tweets.
+
+Sentiment of Tweets aimed at a politician's local constituency - Audience Variable
+
+```{r}
+cons.sentiments = tweet.sentiments2 %>%
+  filter(audience=="constituency")
 ```
 
 ```{r}
-national.value=national.sentiments$value
-hist(national.value)
+mean(cons.sentiments$value)
 ```
 
 ```{r}
 cons.value=cons.sentiments$value
 hist(cons.value)
 ```
+
+Mean sentiment value of words in tweets aimed at a politician's local constituency is 0.36. This is reflected in the histogram which shows an intense concentration of positive words in these tweets. This makes sense, as politicians would not discuss their own constituency or local area in a negative manner as they rely on those people for re-election
+
+The difference in mean sentiment of words in tweets aimed at the nation versus a politician's local constituency also backs up the trends discussed up top. While politicians put on a happy face for their voters, they discuss national politics negatively.
+
+Tokenization and Sentiment Gathering - Message Variable
 
 ```{r}
 data.token3 = data3 %>%
@@ -167,49 +203,11 @@ tweet.sentiments3 = data.token_nostop3 %>%
   distinct()
 ```
 
+Sentiment of Tweets with a Policy Focused Message - Message Variable
+
 ```{r}
 policy.sentiments = tweet.sentiments3 %>%
   filter(message=="policy")
-```
-
-```{r}
-attack.sentiments = tweet.sentiments3 %>%
-  filter(message=="attack")
-```
-
-```{r}
-supp.sentiments = tweet.sentiments3 %>%
-  filter(message=="support")
-```
-
-```{r}
-info.sentiments = tweet.sentiments3 %>%
-  filter(message=="information")
-```
-
-```{r}
-personal.sentiments = tweet.sentiments3 %>%
-  filter(message=="personal")
-```
-
-```{r}
-other.sentiments = tweet.sentiments3 %>%
-  filter(message=="other")
-```
-
-```{r}
-mobil.sentiments = tweet.sentiments3 %>%
-  filter(message=="mobilization")
-```
-
-```{r}
-cons.sentiments.msg = tweet.sentiments3 %>%
-  filter(message=="constituency")
-```
-
-```{r}
-media.sentiments = tweet.sentiments3 %>%
-  filter(message=="media")
 ```
 
 ```{r}
@@ -217,40 +215,21 @@ mean(policy.sentiments$value)
 ```
 
 ```{r}
-mean(attack.sentiments$value)
-```
-
-```{r}
-mean(supp.sentiments$value)
-```
-
-```{r}
-mean(info.sentiments$value)
-```
-
-```{r}
-mean(personal.sentiments$value)
-```
-
-```{r}
-mean(other.sentiments$value)
-```
-
-```{r}
-mean(mobil.sentiments$value)
-```
-
-```{r}
-mean(cons.sentiments.msg$value)
-```
-
-```{r}
-mean(media.sentiments$value)
-```
-
-```{r}
 policy.value=policy.sentiments$value
 hist(policy.value)
+```
+
+Mean sentiment of words in tweets discussing policy is -0.08. Tweets focused on policy are largely a wash - politicians tweet negatively about policies they oppose, and positively about those they support.
+
+Sentiment of Tweets with an Attack Message - Message Variable
+
+```{r}
+attack.sentiments = tweet.sentiments3 %>%
+  filter(message=="attack")
+```
+
+```{r}
+mean(attack.sentiments$value)
 ```
 
 ```{r}
@@ -258,9 +237,35 @@ attack.value=attack.sentiments$value
 hist(attack.value)
 ```
 
+Mean sentiment of words used in tweets with a message meant to attack is -0.53. This makes sense - when attacking another politician, party, or policy, using negative language is necessary. This is reflected in the histogram - these tweets have an extremely high frequency of quite negative words.
+
+Sentiment of Tweets with a Support Message - Message Variable
+
+```{r}
+supp.sentiments = tweet.sentiments3 %>%
+  filter(message=="support")
+```
+
+```{r}
+mean(supp.sentiments$value)
+```
+
 ```{r}
 supp.value=supp.sentiments$value
 hist(supp.value)
+```
+
+Tweets with a message meant to support have words with a mean sentiment value of 0.22. This makes sense - supportive messages need positive words. This is also backed up by the histogram - these tweets have high frequency of decently positive words.
+
+Sentiment of Tweets with a message focused on Informing - Message Variable
+
+```{r}
+info.sentiments = tweet.sentiments3 %>%
+  filter(message=="information")
+```
+
+```{r}
+mean(info.sentiments$value)
 ```
 
 ```{r}
@@ -268,14 +273,35 @@ info.value=info.sentiments$value
 hist(info.value)
 ```
 
+Tweets meant to inform have words with a mean sentiment value of 0.07. This variable being a wash is intuitive. Politicians have to inform their followers of both positive and negative events, and it makes sense they would use language in line with that sentiment in both cases. This is reflected in the similar frequency of positive and negative words displayed in the histogram.
+
+Sentiment of Tweets with a Personal Message - Message Variable
+
+```{r}
+personal.sentiments = tweet.sentiments3 %>%
+  filter(message=="personal")
+```
+
+```{r}
+mean(personal.sentiments$value)
+```
+
 ```{r}
 personal.value=personal.sentiments$value
 hist(personal.value)
 ```
 
+Words in tweets with a personal message have a mean sentiment value of 0.44. This is also intuitive. When politicians share personal messages or information, it is most often to build up their own brand. It makes sense they would use more positive language to do this, and that's backed up by the histogram which shows high intensity of positive words in these tweets.
+
+Sentiment of Tweets focused on Voter Mobilization - Message Variable
+
 ```{r}
-other.value=other.sentiments$value
-hist(other.value)
+mobil.sentiments = tweet.sentiments3 %>%
+  filter(message=="mobilization")
+```
+
+```{r}
+mean(mobil.sentiments$value)
 ```
 
 ```{r}
@@ -283,12 +309,112 @@ mobil.value=mobil.sentiments$value
 hist(mobil.value)
 ```
 
+Words in tweets meant to mobilize voters have an average sentiment of 0.5. When politicians want to mobilize their followers, they share positive messages about things like the possibility of good change in the world. Few people are encouraged by messages of hate. This is reinforced by the histogram which shows mostly positive words in these tweets.
+
+Sentiment of Tweets with a message focused on the politician's constituency - Message Variable
+
+```{r}
+cons.sentiments.msg = tweet.sentiments3 %>%
+  filter(message=="constituency")
+```
+
+```{r}
+mean(cons.sentiments.msg$value)
+```
+
 ```{r}
 cons.msg.value=cons.sentiments.msg$value
 hist(cons.msg.value)
 ```
 
+Mean sentiment of words in constituency-focused tweets is 1.16. This is the highest average sentiment value we've seen yet. This also makes sense. When politicians are sharing messages about their constituency, even in negative circumstances, they tend to use positive language. They want to describe their constituents in a positive light at almost all times, and any negative language used in these tweets is likely not describing the constituents themselves. This is visible in the histogram which shows an extremely skewed distribution heavily favoring positive words.
+
+Whole Tweet Sentiment Analysis - Message Variable
+
 ```{r}
-media.value=media.sentiments$value
-hist(media.value)
+data4 = read_csv("political_social_media.csv") %>%
+  select(-"_golden", -"_unit_state", -"_trusted_judgments", -"_last_judgment_at", -"audience:confidence", -"message:confidence", -"orig__golden", -"audience_gold", -"bias_gold", -bioid, -embed, -label, -"message_gold", -source, -"bias:confidence", -"_unit_id", -bias, -audience)
+
+data.token4 = data4 %>%
+  unnest_tokens(word, text, token = "words")
+
+data.token_nostop4 = data.token4 %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
+
+tweet.sentiments4 = data.token_nostop4 %>%
+  inner_join(sent_words, by = "word") %>%
+  group_by(id) %>%
+  mutate(sentiment = mean(value)) %>%
+  ungroup() %>%
+  select(-value, -word) %>%
+  distinct()
 ```
+
+```{r}
+ggplot(tweet.sentiments4, aes(x=sentiment, fill=message)) +
+  geom_density(alpha=.25) +
+  theme_economist()
+```
+
+Here, I analyzed the average sentiment of a given tweet based on all the relevant words in it. The accompanying graph then shows the distribution of tweet sentiment across different message focuses. As is visible in the graph, tweets with a message focused on constituency are the most positive, followed by tweets with a personal message. Tweets with a message focused on attacking are by far the most negative.
+
+Whole Tweet Sentiment Analysis - Bias Variable
+
+```{r}
+data5 = read_csv("political_social_media.csv") %>%
+  select(-"_golden", -"_unit_state", -"_trusted_judgments", -"_last_judgment_at", -"audience:confidence", -message, -"message:confidence", -"orig__golden", -"audience_gold", -"bias_gold", -bioid, -embed, -label, -"message_gold", -source, -"bias:confidence", -"_unit_id", -audience)
+
+data.token5 = data5 %>%
+  unnest_tokens(word, text, token = "words")
+
+data.token_nostop5 = data.token5 %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
+
+tweet.sentiments5 = data.token_nostop5 %>%
+  inner_join(sent_words, by = "word") %>%
+  group_by(id) %>%
+  mutate(sentiment = mean(value)) %>%
+  ungroup() %>%
+  select(-value, -word) %>%
+  distinct()
+```
+
+```{r}
+ggplot(tweet.sentiments5, aes(x=sentiment, fill=bias)) +
+  geom_density(alpha=.25) +
+  theme_fivethirtyeight()
+```
+
+Here, I analyzed the sentiment of entire tweets based on the positivity/negativity of each word in them split by partisan or neutral bias. Partisan tweets are more negative, while neutral tweets are more biased. This backs up the trend of political polarization and the trend of moving away from bipartisanship discussed earlier.
+
+Whole Tweet Sentiment Analysis - Audience Variable
+
+```{r}
+data6 = read_csv("political_social_media.csv") %>%
+  select(-"_golden", -"_unit_state", -"_trusted_judgments", -"_last_judgment_at", -"audience:confidence", -message, -"message:confidence", -"orig__golden", -"audience_gold", -"bias_gold", -bioid, -embed, -label, -"message_gold", -source, -"bias:confidence", -"_unit_id", -bias)
+
+data.token6 = data6 %>%
+  unnest_tokens(word, text, token = "words")
+
+data.token_nostop6 = data.token6 %>%
+  anti_join(stop_words, by = "word") %>%
+  filter(!word %in% c("http","t.co","amp","day","rt","1","week","watch","morning","2","3","4","5","6","7","8","9","10","2013","2014","2015","2016","2017","2018","2019"))
+
+tweet.sentiments6 = data.token_nostop6 %>%
+  inner_join(sent_words, by = "word") %>%
+  group_by(id) %>%
+  mutate(sentiment = mean(value)) %>%
+  ungroup() %>%
+  select(-value, -word) %>%
+  distinct()
+```
+
+```{r}
+ggplot(tweet.sentiments6, aes(x=sentiment, fill=audience)) +
+  geom_density(alpha=.25) +
+  theme_fivethirtyeight()
+```
+
+Here, I analyzed the sentiment of entire tweets split by their focus on a politician's local constituency or the entire nation. Tweets aimed at the entire nation are more negative while tweets aimed at a politician's local constituency are more positive.
