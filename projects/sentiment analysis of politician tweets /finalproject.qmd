@@ -354,7 +354,7 @@ tweet.sentiments4 = data.token_nostop4 %>%
 ```{r}
 ggplot(tweet.sentiments4, aes(x=sentiment, fill=message)) +
   geom_density(alpha=.25) +
-  theme_economist()
+  theme_economist_white()
 ```
 
 Here, I analyzed the average sentiment of a given tweet based on all the relevant words in it. The accompanying graph then shows the distribution of tweet sentiment across different message focuses. As is visible in the graph, tweets with a message focused on constituency are the most positive, followed by tweets with a personal message. Tweets with a message focused on attacking are by far the most negative.
@@ -384,7 +384,7 @@ tweet.sentiments5 = data.token_nostop5 %>%
 ```{r}
 ggplot(tweet.sentiments5, aes(x=sentiment, fill=bias)) +
   geom_density(alpha=.25) +
-  theme_fivethirtyeight()
+  theme_economist_white()
 ```
 
 Here, I analyzed the sentiment of entire tweets based on the positivity/negativity of each word in them split by partisan or neutral bias. Partisan tweets are more negative, while neutral tweets are more biased. This backs up the trend of political polarization and the trend of moving away from bipartisanship discussed earlier.
@@ -414,7 +414,7 @@ tweet.sentiments6 = data.token_nostop6 %>%
 ```{r}
 ggplot(tweet.sentiments6, aes(x=sentiment, fill=audience)) +
   geom_density(alpha=.25) +
-  theme_fivethirtyeight()
+  theme_economist_white()
 ```
 
 Here, I analyzed the sentiment of entire tweets split by their focus on a politician's local constituency or the entire nation. Tweets aimed at the entire nation are more negative while tweets aimed at a politician's local constituency are more positive.
